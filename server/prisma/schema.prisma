@@ -1,0 +1,32 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:supersecretpassword@localhost:5432/test"
+}
+
+model User {
+  id  Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email String @unique
+  userName String?
+  tweets Tweet[]
+}
+
+model Tweet {
+  id  Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  body String
+  likes Int @default(0)
+  replyTrace Int[]
+  author User @relation(fields: [authorID], references: [id])
+  authorID Int
+
+  parent      Tweet?   @relation("ParentAndReplies", fields: [parentId], references: [id])
+  parentId    Int?     
+  replies     Tweet[]  @relation("ParentAndReplies")
+}
+
